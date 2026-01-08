@@ -84,6 +84,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 			}
 			else if (State == State.Configure)
 			{
+				// Additional configuration can be added here if needed
 			}
 			else if (State == State.DataLoaded)
 			{
@@ -156,6 +157,12 @@ namespace NinjaTrader.NinjaScript.Indicators
 		{
 			if (marketDataUpdate.MarketDataType == MarketDataType.Last)
 			{
+				// Validate market data
+				if (double.IsNaN(marketDataUpdate.Price) || 
+				    double.IsNaN(marketDataUpdate.Bid) || 
+				    double.IsNaN(marketDataUpdate.Ask))
+					return;
+				
 				// Get the current bar index
 				int barIndex = CurrentBar;
 				
