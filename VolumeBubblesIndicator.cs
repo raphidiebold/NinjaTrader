@@ -42,6 +42,9 @@ namespace NinjaTrader.NinjaScript.Indicators
 		private List<VolumeBubble> volumeBubbles;
 		private Dictionary<int, Dictionary<double, long>> bidVolumeByBar;
 		private Dictionary<int, Dictionary<double, long>> askVolumeByBar;
+		private Brush cachedBidBrush;
+		private Brush cachedAskBrush;
+		private const int MaxBubbles = 5000; // Maximum number of bubbles to store
 
 		protected override void OnStateChange()
 		{
@@ -76,7 +79,24 @@ namespace NinjaTrader.NinjaScript.Indicators
 			}
 			else if (State == State.DataLoaded)
 			{
-				// Initialize for historical data
+				// Initialize cached brushes with opacity
+				cachedBidBrush = BidColor.Clone();
+				cachedBidBrush.Opacity = BubbleOpacity;
+				cachedBidBrush.Freeze();
+				
+				cachedAskBrush = AskColor.Clone();
+				cachedAskBrush.Opacity = BubbleOpacity;
+				cachedAskBrush.Freeze();
+			}
+			else if (State == State.Terminated)
+			{
+				// Clean up resources
+				if (volumeBubbles != null)
+					volumeBubbles.Clear();
+				if (bidVolumeByBar != null)
+					bidVolumeByBar.Clear();
+				if (askVolumeByBar != null)
+					askVolumeByBar.Clear();
 			}
 		}
 
@@ -96,8 +116,19 @@ namespace NinjaTrader.NinjaScript.Indicators
 				long volume = marketDataUpdate.Volume;
 
 				// Determine if this is a bid or ask trade based on price movement
-				// If price is at ask, it's a buy (ask), if at bid it's a sell (bid)
-				bool isAsk = marketDataUpdate.Price >= marketDataUpdate.Ask;
+				// Check if Bid and Ask data are available first
+				bool isAsk = false;
+				if (marketDataUpdate.Ask > 0 && marketDataUpdate.Bid > 0)
+				{
+					// If price is closer to ask, it's a buy (ask), if closer to bid it's a sell (bid)
+					double midPrice = (marketDataUpdate.Ask + marketDataUpdate.Bid) / 2;
+					isAsk = marketDataUpdate.Price >= midPrice;
+				}
+				else
+				{
+					// Fallback: compare with previous price if bid/ask not available
+					isAsk = marketDataUpdate.Price >= marketDataUpdate.Ask;
+				}
 
 				// Check if volume meets minimum threshold
 				if (volume >= MinimumVolume)
@@ -113,6 +144,13 @@ namespace NinjaTrader.NinjaScript.Indicators
 					};
 
 					volumeBubbles.Add(bubble);
+					
+					// Limit the number of stored bubbles to prevent memory issues
+					if (volumeBubbles.Count > MaxBubbles)
+					{
+						// Remove oldest bubbles (first half)
+						volumeBubbles.RemoveRange(0, MaxBubbles / 2);
+					}
 
 					// Also aggregate by bar and price for historical view
 					if (isAsk)
@@ -143,15 +181,18 @@ namespace NinjaTrader.NinjaScript.Indicators
 		{
 			base.OnRender(chartControl, chartScale);
 
-			if (Bars == null || chartControl == null)
+			if (Bars == null || chartControl == null || volumeBubbles == null)
 				return;
 
-			// Render volume bubbles
+			// Render volume bubbles - only those in visible range
+			int visibleBubbleCount = 0;
 			foreach (var bubble in volumeBubbles)
 			{
 				// Skip if bar is not in visible range
 				if (bubble.BarIndex < ChartBars.FromIndex || bubble.BarIndex > ChartBars.ToIndex)
 					continue;
+
+				visibleBubbleCount++;
 
 				// Calculate bubble size based on volume
 				double bubbleSize = CalculateBubbleSize(bubble.Volume);
@@ -160,13 +201,8 @@ namespace NinjaTrader.NinjaScript.Indicators
 				int x = chartControl.GetXByBarIndex(ChartBars, bubble.BarIndex);
 				int y = chartScale.GetYByValue(bubble.Price);
 
-				// Select color based on bid/ask
-				Brush bubbleBrush = bubble.IsAsk ? AskColor : BidColor;
-				
-				// Create semi-transparent brush
-				Brush renderBrush = bubbleBrush.Clone();
-				renderBrush.Opacity = BubbleOpacity;
-				renderBrush.Freeze();
+				// Select cached brush based on bid/ask
+				Brush renderBrush = bubble.IsAsk ? cachedAskBrush : cachedBidBrush;
 
 				// Draw the bubble (circle)
 				SharpDX.Direct2D1.RenderTarget renderTarget = chartControl.RenderTarget;
