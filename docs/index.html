@@ -150,8 +150,10 @@
                         <li>✓ Email Support</li>
                     </ul>
                     
-                    <!-- PayPal Button Container -->
-                    <div id="paypal-button-container-onetime"></div>
+                    <!-- PayPal SDK v6 Button -->
+                    <div id="paypal-button-onetime" style="min-height: 50px;">
+                        <paypal-button type="pay" hidden></paypal-button>
+                    </div>
                     
                     <p class="secure-payment">🔒 Secure payment via PayPal • Credit Cards accepted</p>
                 </div>
@@ -173,8 +175,11 @@
                         <li>✓ Priority Support</li>
                     </ul>
                     
-                    <!-- PayPal Subscription Button Container -->
-                    <div id="paypal-button-container-subscription"></div>
+                    <!-- PayPal Subscription - Coming Soon -->
+                    <div style="text-align: center; padding: 20px; background: #f5f5f5; border-radius: 8px;">
+                        <p style="margin: 0; color: #666;">Subscription option coming soon!</p>
+                        <p style="margin: 8px 0 0 0; font-size: 14px; color: #999;">Use one-time purchase for now</p>
+                    </div>
                     
                     <p class="secure-payment">🔒 Secure payment via PayPal • Credit Cards accepted</p>
                 </div>
@@ -231,10 +236,8 @@
         <div class="lightbox-caption" id="lightbox-caption"></div>
     </div>
 
-    <!-- PayPal SDK - SANDBOX-MODUS (für Tests) -->
-    <!-- Sandbox Client ID - funktioniert mit Test-Accounts -->
-    <!-- Für Live-Betrieb: PayPal Business Account verifizieren, dann Live Client ID hier eintragen -->
-    <script src="https://www.paypal.com/sdk/js?client-id=Adr6O6q0QWdYPcLqGOPSQqEGY2gKEwRVex_VDYkCV82zI36wwQhR1LBQM0JDxOzGKFB9SqE3icKlvQxL&vault=true&intent=subscription&currency=USD"></script>
+    <!-- PayPal SDK v6 - SANDBOX-MODUS -->
+    <script async src="https://www.sandbox.paypal.com/web-sdk/v6/core" onload="onPayPalWebSdkLoaded()"></script>
     <script src="script.js"></script>
 </body>
 </html>
