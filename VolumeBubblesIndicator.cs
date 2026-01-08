@@ -44,6 +44,7 @@ namespace NinjaTrader.NinjaScript.Indicators
 		private Dictionary<int, Dictionary<double, long>> askVolumeByBar;
 		private Brush cachedBidBrush;
 		private Brush cachedAskBrush;
+		private SharpDX.DirectWrite.TextFormat cachedTextFormat;
 		private const int MaxBubbles = 5000; // Maximum number of bubbles to store
 
 		protected override void OnStateChange()
@@ -87,6 +88,15 @@ namespace NinjaTrader.NinjaScript.Indicators
 				cachedAskBrush = AskColor.Clone();
 				cachedAskBrush.Opacity = BubbleOpacity;
 				cachedAskBrush.Freeze();
+				
+				// Initialize cached text format for volume labels
+				cachedTextFormat = new SharpDX.DirectWrite.TextFormat(
+					Core.Globals.DirectWriteFactory,
+					"Arial",
+					SharpDX.DirectWrite.FontWeight.Bold,
+					SharpDX.DirectWrite.FontStyle.Normal,
+					8.0f
+				);
 			}
 			else if (State == State.Terminated)
 			{
@@ -97,6 +107,11 @@ namespace NinjaTrader.NinjaScript.Indicators
 					bidVolumeByBar.Clear();
 				if (askVolumeByBar != null)
 					askVolumeByBar.Clear();
+				if (cachedTextFormat != null)
+				{
+					cachedTextFormat.Dispose();
+					cachedTextFormat = null;
+				}
 			}
 		}
 
@@ -225,22 +240,14 @@ namespace NinjaTrader.NinjaScript.Indicators
 				dxOutlineBrush.Dispose();
 
 				// Draw volume label if enabled and bubble is large enough
-				if (ShowVolumeLabel && bubbleSize > MinBubbleSize * 1.5)
+				if (ShowVolumeLabel && bubbleSize > MinBubbleSize * 1.5 && cachedTextFormat != null)
 				{
 					string volumeText = FormatVolume(bubble.Volume);
-					
-					SharpDX.DirectWrite.TextFormat textFormat = new SharpDX.DirectWrite.TextFormat(
-						Core.Globals.DirectWriteFactory,
-						"Arial",
-						SharpDX.DirectWrite.FontWeight.Bold,
-						SharpDX.DirectWrite.FontStyle.Normal,
-						8.0f
-					);
 
 					SharpDX.DirectWrite.TextLayout textLayout = new SharpDX.DirectWrite.TextLayout(
 						Core.Globals.DirectWriteFactory,
 						volumeText,
-						textFormat,
+						cachedTextFormat,
 						200,
 						20
 					);
@@ -256,7 +263,6 @@ namespace NinjaTrader.NinjaScript.Indicators
 
 					textBrush.Dispose();
 					textLayout.Dispose();
-					textFormat.Dispose();
 				}
 			}
 		}
@@ -266,8 +272,8 @@ namespace NinjaTrader.NinjaScript.Indicators
 			// Scale bubble size based on volume
 			// Use logarithmic scaling for better visualization
 			
-			// Prevent division by zero and invalid log operations
-			if (MinimumVolume <= 1 || volume < MinimumVolume)
+			// Safety check: MinimumVolume must be at least 2 for proper logarithmic scaling
+			if (MinimumVolume < 2 || volume < MinimumVolume)
 				return MinBubbleSize;
 			
 			double scaleFactor = Math.Log10(volume) / Math.Log10(MinimumVolume);
@@ -297,8 +303,8 @@ namespace NinjaTrader.NinjaScript.Indicators
 		#region Properties
 
 		[NinjaScriptProperty]
-		[Range(1, int.MaxValue)]
-		[Display(Name = "Minimum Volume", Description = "Mindestvolumen für Blasen-Anzeige / Minimum volume threshold for bubble display", Order = 1, GroupName = "Parameters")]
+		[Range(2, int.MaxValue)]
+		[Display(Name = "Minimum Volume", Description = "Mindestvolumen für Blasen-Anzeige / Minimum volume threshold for bubble display (minimum 2 for proper scaling)", Order = 1, GroupName = "Parameters")]
 		public int MinimumVolume
 		{ get; set; }
 
