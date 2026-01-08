@@ -3,11 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media;
 using System.Xml.Serialization;
 using NinjaTrader.Cbi;
@@ -40,8 +36,6 @@ namespace NinjaTrader.NinjaScript.Indicators
 		}
 
 		private List<VolumeBubble> volumeBubbles;
-		private Dictionary<int, Dictionary<double, long>> bidVolumeByBar;
-		private Dictionary<int, Dictionary<double, long>> askVolumeByBar;
 		private Brush cachedBidBrush;
 		private Brush cachedAskBrush;
 		private SharpDX.DirectWrite.TextFormat cachedTextFormat;
@@ -75,8 +69,6 @@ namespace NinjaTrader.NinjaScript.Indicators
 			else if (State == State.Configure)
 			{
 				volumeBubbles = new List<VolumeBubble>();
-				bidVolumeByBar = new Dictionary<int, Dictionary<double, long>>();
-				askVolumeByBar = new Dictionary<int, Dictionary<double, long>>();
 			}
 			else if (State == State.DataLoaded)
 			{
@@ -103,10 +95,6 @@ namespace NinjaTrader.NinjaScript.Indicators
 				// Clean up resources
 				if (volumeBubbles != null)
 					volumeBubbles.Clear();
-				if (bidVolumeByBar != null)
-					bidVolumeByBar.Clear();
-				if (askVolumeByBar != null)
-					askVolumeByBar.Clear();
 				if (cachedTextFormat != null)
 				{
 					cachedTextFormat.Dispose();
@@ -165,28 +153,6 @@ namespace NinjaTrader.NinjaScript.Indicators
 					{
 						// Remove oldest bubbles (first half)
 						volumeBubbles.RemoveRange(0, MaxBubbles / 2);
-					}
-
-					// Also aggregate by bar and price for historical view
-					if (isAsk)
-					{
-						if (!askVolumeByBar.ContainsKey(barIndex))
-							askVolumeByBar[barIndex] = new Dictionary<double, long>();
-						
-						if (!askVolumeByBar[barIndex].ContainsKey(price))
-							askVolumeByBar[barIndex][price] = 0;
-						
-						askVolumeByBar[barIndex][price] += volume;
-					}
-					else
-					{
-						if (!bidVolumeByBar.ContainsKey(barIndex))
-							bidVolumeByBar[barIndex] = new Dictionary<double, long>();
-						
-						if (!bidVolumeByBar[barIndex].ContainsKey(price))
-							bidVolumeByBar[barIndex][price] = 0;
-						
-						bidVolumeByBar[barIndex][price] += volume;
 					}
 				}
 			}
