@@ -55,13 +55,11 @@ Siehe [PAYPAL_SETUP.md](PAYPAL_SETUP.md) für detaillierte Anleitung.
 
 ### 3. Email-Versand einrichten
 
-Siehe [EMAIL_SETUP.md](EMAIL_SETUP.md) für detaillierte Anleitung.
-
 **Umgebungsvariablen in Netlify setzen:**
 ```
-SMTP_HOST=smtp.gmail.com
-SMTP_USER=deine-email@gmail.com
-SMTP_PASS=dein-app-passwort
+SMTP_HOST=your-smtp-host
+SMTP_USER=your-email@example.com
+SMTP_PASS=your-app-password
 DOWNLOAD_URL=https://your-site.netlify.app/VolumeBubbleIndicator.cs
 ```
 
