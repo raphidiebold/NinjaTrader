@@ -11,6 +11,22 @@ exports.handler = async (event, context) => {
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
   const environment = process.env.PAYPAL_ENV;
   
+  // Check if environment variables are set
+  if (!clientId || !clientSecret || !environment) {
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        error: 'Missing PayPal credentials',
+        details: {
+          hasClientId: !!clientId,
+          hasClientSecret: !!clientSecret,
+          hasEnvironment: !!environment
+        }
+      })
+    };
+  }
+  
   const baseURL = environment === 'sandbox' 
     ? 'https://api-m.sandbox.paypal.com'
     : 'https://api-m.paypal.com';
