@@ -1,0 +1,2 @@
+# NinjaTrader
+Indikator für Ninjatrader
