@@ -1,57 +1,28 @@
-// Get PayPal Client Token for SDK v6
-
 const fetch = require('node-fetch');
 
 exports.handler = async (event, context) => {
-  // Always return JSON with proper headers
   const headers = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*',
   };
 
-  if (event.httpMethod !== 'POST' && event.httpMethod !== 'GET') {
-    return { 
-      statusCode: 405, 
-      headers,
-      body: JSON.stringify({ error: 'Method Not Allowed' })
-    };
-  }
-
-  const clientId = process.env.PAYPAL_CLIENT_ID;
-  const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
-  const environment = process.env.PAYPAL_ENV;
-  
-  // Debug: Log what we have
-  console.log('Environment check:', {
-    hasClientId: !!clientId,
-    hasClientSecret: !!clientSecret,
-    hasEnvironment: !!environment,
-    clientIdLength: clientId?.length,
-    environment: environment
-  });
-  
-  // Check if environment variables are set
-  if (!clientId || !clientSecret || !environment) {
-    return {
-      statusCode: 500,
-      headers,
-      body: JSON.stringify({ 
-        error: 'Missing PayPal credentials',
-        details: {
-          hasClientId: !!clientId,
-          hasClientSecret: !!clientSecret,
-          hasEnvironment: !!environment,
-          allEnvVars: Object.keys(process.env).filter(k => k.includes('PAYPAL') || k.includes('SMTP'))
-        }
-      })
-    };
-  }
-  
-  const baseURL = environment === 'sandbox' 
-    ? 'https://api-m.sandbox.paypal.com'
-    : 'https://api-m.paypal.com';
-
   try {
+    const clientId = process.env.PAYPAL_CLIENT_ID;
+    const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
+    const environment = process.env.PAYPAL_ENV || 'sandbox';
+    
+    if (!clientId || !clientSecret) {
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ error: 'Missing credentials' })
+      };
+    }
+
+    const baseURL = environment === 'sandbox' 
+      ? 'https://api-m.sandbox.paypal.com'
+      : 'https://api-m.paypal.com';
+
     // Get access token
     const auth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
     
@@ -63,6 +34,18 @@ exports.handler = async (event, context) => {
       },
       body: 'grant_type=client_credentials'
     });
+
+    if (!tokenResponse.ok) {
+      const errorText = await tokenResponse.text();
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ 
+          error: 'Failed to get access token',
+          status: tokenResponse.status
+        })
+      };
+    }
 
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
@@ -77,6 +60,18 @@ exports.handler = async (event, context) => {
       body: JSON.stringify({})
     });
 
+    if (!clientTokenResponse.ok) {
+      const errorText = await clientTokenResponse.text();
+      return {
+        statusCode: 500,
+        headers,
+        body: JSON.stringify({ 
+          error: 'Failed to get client token',
+          status: clientTokenResponse.status
+        })
+      };
+    }
+
     const clientTokenData = await clientTokenResponse.json();
 
     return {
@@ -88,13 +83,12 @@ exports.handler = async (event, context) => {
     };
 
   } catch (error) {
-    console.error('Error getting client token:', error);
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({ 
-        error: 'Failed to get client token',
-        message: error.message 
+        error: 'Server error',
+        message: error.message
       })
     };
   }
