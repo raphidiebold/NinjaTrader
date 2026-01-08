@@ -124,10 +124,10 @@ namespace NinjaTrader.NinjaScript.Indicators
 					double midPrice = (marketDataUpdate.Ask + marketDataUpdate.Bid) / 2;
 					isAsk = marketDataUpdate.Price >= midPrice;
 				}
-				else
+				else if (CurrentBar > 0)
 				{
-					// Fallback: compare with previous price if bid/ask not available
-					isAsk = marketDataUpdate.Price >= marketDataUpdate.Ask;
+					// Fallback: compare with previous close price
+					isAsk = marketDataUpdate.Price >= Close[0];
 				}
 
 				// Check if volume meets minimum threshold
@@ -265,6 +265,11 @@ namespace NinjaTrader.NinjaScript.Indicators
 		{
 			// Scale bubble size based on volume
 			// Use logarithmic scaling for better visualization
+			
+			// Prevent division by zero and invalid log operations
+			if (MinimumVolume <= 1 || volume < MinimumVolume)
+				return MinBubbleSize;
+			
 			double scaleFactor = Math.Log10(volume) / Math.Log10(MinimumVolume);
 			double size = MinBubbleSize + (scaleFactor * (MaxBubbleSize - MinBubbleSize));
 			

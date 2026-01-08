@@ -42,12 +42,18 @@ Bubble zeichnen (SharpDX)
 
 ### Logarithmische Skalierung
 
-Die Blasengröße wird logarithmisch skaliert, um eine bessere visuelle Darstellung zu erreichen:
+Die Blasengröße wird logarithmisch skaliert, um eine bessere visuelle Darstellung zu erreichen.
+Es enthält Schutz vor Division durch Null und ungültigen Logarithmus-Operationen:
 
 ```csharp
+if (MinimumVolume <= 1 || volume < MinimumVolume)
+    return MinBubbleSize;
+
 double scaleFactor = Math.Log10(volume) / Math.Log10(MinimumVolume);
 double size = MinBubbleSize + (scaleFactor * (MaxBubbleSize - MinBubbleSize));
 ```
+
+**Wichtig:** MinimumVolume sollte mindestens 2 sein, um korrekte Skalierung zu gewährleisten.
 
 ### Beispiele / Examples
 
@@ -64,14 +70,27 @@ Bei MinimumVolume = 100, MinBubbleSize = 5, MaxBubbleSize = 20:
 
 ## Bid/Ask Erkennung / Bid/Ask Detection
 
-Die Unterscheidung zwischen Bid und Ask erfolgt anhand des Preises:
+Die Unterscheidung zwischen Bid und Ask erfolgt in mehreren Schritten:
 
+**Primär:** Vergleich mit dem Midpoint zwischen Bid und Ask
 ```csharp
-bool isAsk = marketDataUpdate.Price >= marketDataUpdate.Ask;
+if (marketDataUpdate.Ask > 0 && marketDataUpdate.Bid > 0)
+{
+    double midPrice = (marketDataUpdate.Ask + marketDataUpdate.Bid) / 2;
+    isAsk = marketDataUpdate.Price >= midPrice;
+}
 ```
 
-- **Ask (Kauf)**: Preis >= Ask-Preis → Grüne Blase
-- **Bid (Verkauf)**: Preis < Ask-Preis → Rote Blase
+**Fallback:** Vergleich mit dem vorherigen Close-Preis, wenn Bid/Ask nicht verfügbar
+```csharp
+else if (CurrentBar > 0)
+{
+    isAsk = marketDataUpdate.Price >= Close[0];
+}
+```
+
+- **Ask (Kauf)**: Preis >= Midpoint oder >= Previous Close → Grüne Blase
+- **Bid (Verkauf)**: Preis < Midpoint oder < Previous Close → Rote Blase
 
 ## Rendering-Pipeline
 
