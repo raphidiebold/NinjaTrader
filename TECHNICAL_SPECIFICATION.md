@@ -46,14 +46,14 @@ Die Blasengröße wird logarithmisch skaliert, um eine bessere visuelle Darstell
 Es enthält Schutz vor Division durch Null und ungültigen Logarithmus-Operationen:
 
 ```csharp
-if (MinimumVolume <= 1 || volume < MinimumVolume)
+if (MinimumVolume < 2 || volume < MinimumVolume)
     return MinBubbleSize;
 
 double scaleFactor = Math.Log10(volume) / Math.Log10(MinimumVolume);
 double size = MinBubbleSize + (scaleFactor * (MaxBubbleSize - MinBubbleSize));
 ```
 
-**Wichtig:** MinimumVolume sollte mindestens 2 sein, um korrekte Skalierung zu gewährleisten.
+**Wichtig:** MinimumVolume muss mindestens 2 sein, um korrekte Skalierung zu gewährleisten.
 
 ### Beispiele / Examples
 

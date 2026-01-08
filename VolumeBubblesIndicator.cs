@@ -200,14 +200,11 @@ namespace NinjaTrader.NinjaScript.Indicators
 				return;
 
 			// Render volume bubbles - only those in visible range
-			int visibleBubbleCount = 0;
 			foreach (var bubble in volumeBubbles)
 			{
 				// Skip if bar is not in visible range
 				if (bubble.BarIndex < ChartBars.FromIndex || bubble.BarIndex > ChartBars.ToIndex)
 					continue;
-
-				visibleBubbleCount++;
 
 				// Calculate bubble size based on volume
 				double bubbleSize = CalculateBubbleSize(bubble.Volume);
