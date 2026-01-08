@@ -3,25 +3,45 @@
 const fetch = require('node-fetch');
 
 exports.handler = async (event, context) => {
+  // Always return JSON with proper headers
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+  };
+
   if (event.httpMethod !== 'POST' && event.httpMethod !== 'GET') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return { 
+      statusCode: 405, 
+      headers,
+      body: JSON.stringify({ error: 'Method Not Allowed' })
+    };
   }
 
   const clientId = process.env.PAYPAL_CLIENT_ID;
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
   const environment = process.env.PAYPAL_ENV;
   
+  // Debug: Log what we have
+  console.log('Environment check:', {
+    hasClientId: !!clientId,
+    hasClientSecret: !!clientSecret,
+    hasEnvironment: !!environment,
+    clientIdLength: clientId?.length,
+    environment: environment
+  });
+  
   // Check if environment variables are set
   if (!clientId || !clientSecret || !environment) {
     return {
       statusCode: 500,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ 
         error: 'Missing PayPal credentials',
         details: {
           hasClientId: !!clientId,
           hasClientSecret: !!clientSecret,
-          hasEnvironment: !!environment
+          hasEnvironment: !!environment,
+          allEnvVars: Object.keys(process.env).filter(k => k.includes('PAYPAL') || k.includes('SMTP'))
         }
       })
     };
@@ -61,10 +81,7 @@ exports.handler = async (event, context) => {
 
     return {
       statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      },
+      headers,
       body: JSON.stringify({
         clientToken: clientTokenData.client_token
       })
@@ -74,7 +91,11 @@ exports.handler = async (event, context) => {
     console.error('Error getting client token:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to get client token' })
+      headers,
+      body: JSON.stringify({ 
+        error: 'Failed to get client token',
+        message: error.message 
+      })
     };
   }
 };
