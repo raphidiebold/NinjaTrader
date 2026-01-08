@@ -1,0 +1,6 @@
+*.md
+!docs/**
+PAYPAL_SETUP.md
+EMAIL_SETUP.md
+GO_LIVE.md
+README.md
