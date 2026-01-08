@@ -110,6 +110,46 @@ namespace NinjaTrader.NinjaScript.Indicators
 		{
 			if (CurrentBar < 1)
 				return;
+			
+			// For historical data, use the bar's volume and approximate bid/ask distribution
+			// This provides visual representation even when detailed market data isn't available
+			if (State == State.Historical)
+			{
+				int barIndex = CurrentBar;
+				
+				if (!volumeDataByBar.ContainsKey(barIndex))
+				{
+					// Approximate bid/ask split based on close relative to high/low
+					double totalVolume = Volume[0];
+					double priceRange = High[0] - Low[0];
+					
+					if (priceRange > 0)
+					{
+						// If close is near high, more volume was likely at ask
+						// If close is near low, more volume was likely at bid
+						double closePct = (Close[0] - Low[0]) / priceRange;
+						
+						volumeDataByBar[barIndex] = new VolumeData
+						{
+							AskVolume = totalVolume * closePct,
+							BidVolume = totalVolume * (1 - closePct),
+							Price = Close[0],
+							BarIndex = barIndex
+						};
+					}
+					else
+					{
+						// No price movement, split volume evenly
+						volumeDataByBar[barIndex] = new VolumeData
+						{
+							AskVolume = totalVolume * 0.5,
+							BidVolume = totalVolume * 0.5,
+							Price = Close[0],
+							BarIndex = barIndex
+						};
+					}
+				}
+			}
 		}
 		
 		protected override void OnMarketData(MarketDataEventArgs marketDataUpdate)
@@ -174,6 +214,9 @@ namespace NinjaTrader.NinjaScript.Indicators
 			int firstVisibleBar = ChartBars.FromIndex;
 			int lastVisibleBar = ChartBars.ToIndex;
 			
+			// Clean up old data that's no longer visible (keep a buffer)
+			CleanupOldData(firstVisibleBar - 100);
+			
 			// Draw bubbles for visible bars
 			foreach (var kvp in volumeDataByBar)
 			{
@@ -195,6 +238,16 @@ namespace NinjaTrader.NinjaScript.Indicators
 				{
 					DrawVolumeBubble(chartControl, chartScale, barIndex, data.Price, data.BidVolume, BidBubbleColor, "Bid");
 				}
+			}
+		}
+		
+		private void CleanupOldData(int keepFromBar)
+		{
+			// Remove data older than keepFromBar to prevent memory bloat
+			var keysToRemove = volumeDataByBar.Keys.Where(k => k < keepFromBar).ToList();
+			foreach (var key in keysToRemove)
+			{
+				volumeDataByBar.Remove(key);
 			}
 		}
 		
