@@ -102,6 +102,27 @@ function showSuccessMessage(orderData, type) {
 
 // Send order details to your server (backend required)
 function sendOrderToServer(orderData, type) {
+    // Send to Netlify Function
+    fetch('/.netlify/functions/send-download', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            orderId: orderData.id,
+            email: orderData.payer?.email_address || 'customer@email.com',
+            name: orderData.payer?.name?.given_name || 'Customer',
+            type: type,
+            subscription: orderData.subscription || false
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Email sent successfully:', data);
+    })
+    .catch(error => {
+        console.error('Error sending email:', error);
+    });
     // This is where you would send the order data to your backend server
     // to process the order, send the download link via email, etc.
     
