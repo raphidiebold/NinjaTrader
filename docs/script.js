@@ -1,8 +1,16 @@
 // PayPal Integration
 // Replace 'YOUR_PAYPAL_CLIENT_ID' in index.html with your actual PayPal Client ID
 
-// One-time payment button
-paypal.Buttons({
+// Wait for PayPal SDK to load
+if (typeof paypal !== 'undefined') {
+    initPayPalButtons();
+} else {
+    console.error('PayPal SDK not loaded');
+}
+
+function initPayPalButtons() {
+    // One-time payment button
+    paypal.Buttons({
     // Set up the transaction
     createOrder: function(data, actions) {
         return actions.order.create({
@@ -32,10 +40,10 @@ paypal.Buttons({
         console.error('PayPal error:', err);
         alert('An error occurred with the payment. Please try again or contact support.');
     }
-}).render('#paypal-button-container-onetime');
+    }).render('#paypal-button-container-onetime');
 
-// Monthly subscription button
-paypal.Buttons({
+    // Monthly subscription button
+    paypal.Buttons({
     style: {
         shape: 'rect',
         color: 'blue',
@@ -77,7 +85,10 @@ paypal.Buttons({
         console.error('Error details:', JSON.stringify(err, null, 2));
         alert('Fehler beim Abonnement: ' + (err.message || err.toString()) + '\n\nBitte überprüfen Sie die Browser-Konsole für Details oder kontaktieren Sie den Support.');
     }
-}).render('#paypal-button-container-subscription');
+    }).render('#paypal-button-container-subscription');
+}
+
+// End of PayPal initialization
 
 // Show success message after purchase
 function showSuccessMessage(orderData, type) {
