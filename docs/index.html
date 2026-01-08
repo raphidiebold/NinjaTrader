@@ -236,8 +236,8 @@
         <div class="lightbox-caption" id="lightbox-caption"></div>
     </div>
 
-    <!-- PayPal SDK v6 -->
-    <script async src="https://www.sandbox.paypal.com/web-sdk/v6/core" onload="onPayPalWebSdkLoaded()"></script>
+    <!-- Load script.js FIRST, then PayPal SDK -->
     <script src="script.js"></script>
+    <script async src="https://www.sandbox.paypal.com/web-sdk/v6/core" onload="onPayPalWebSdkLoaded()"></script>
 </body>
 </html>
