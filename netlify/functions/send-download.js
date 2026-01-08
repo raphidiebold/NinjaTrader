@@ -12,7 +12,7 @@ exports.handler = async (event, context) => {
 
     // Create email transporter (configure with your email service)
     const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      host: process.env.SMTP_HOST,
       port: 587,
       secure: false,
       auth: {

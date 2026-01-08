@@ -9,7 +9,7 @@ exports.handler = async (event, context) => {
 
   const clientId = process.env.PAYPAL_CLIENT_ID;
   const clientSecret = process.env.PAYPAL_CLIENT_SECRET;
-  const environment = process.env.PAYPAL_ENV || 'sandbox';
+  const environment = process.env.PAYPAL_ENV;
   
   const baseURL = environment === 'sandbox' 
     ? 'https://api-m.sandbox.paypal.com'
