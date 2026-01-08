@@ -44,8 +44,13 @@ paypal.Buttons({
     },
     // Set up the subscription
     createSubscription: function(data, actions) {
+        console.log('Creating subscription with Plan ID: P-0UY85111HW8408537NFP7UAQ');
         return actions.subscription.create({
             'plan_id': 'P-0UY85111HW8408537NFP7UAQ'
+        }).catch(function(err) {
+            console.error('Subscription creation error:', err);
+            alert('Fehler beim Erstellen des Abonnements: ' + (err.message || 'Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.'));
+            throw err;
         });
     },
     
@@ -66,8 +71,11 @@ paypal.Buttons({
     
     // Handle errors
     onError: function(err) {
-        console.error('PayPal subscription error:', err);
-        alert('An error occurred with the subscription. Please try again or contact support.');
+        console.error('PayPal subscription error details:', err);
+        console.error('Error name:', err.name);
+        console.error('Error message:', err.message);
+        console.error('Error details:', JSON.stringify(err, null, 2));
+        alert('Fehler beim Abonnement: ' + (err.message || err.toString()) + '\n\nBitte überprüfen Sie die Browser-Konsole für Details oder kontaktieren Sie den Support.');
     }
 }).render('#paypal-button-container-subscription');
 

@@ -1,4 +1,23 @@
-# Environment Variables Setup
+# PayPal & Email Setup
+
+## PayPal Integration
+
+### Client IDs
+**Sandbox (Test):**
+- Client ID: `Adr6O6q0QWdYPcLqGOPSQqEGY2gKEwRVex_VDYkCV82zI36wwQhR1LBQM0JDxOzGKFB9SqE3icKlvQxL`
+- App Name: NinjaTrader 8 Indikator
+- Created: 08/01/26
+
+**Live (Production):**
+- Switch in PayPal Dashboard from Sandbox to Live
+- Get Live Client ID from the same app
+- Update in `docs/index.html` Line 230
+
+### Subscription Plan ID
+- Monthly $5: `P-0UY85111HW8408537NFP7UAQ`
+- Update in `docs/script.js` Line 50
+
+---
 
 ## Required Environment Variables
 
