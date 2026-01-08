@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volume Bubble Indicator - NinjaTrader 8</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">Volume Bubble Indicator</div>
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#screenshots">Screenshots</a></li>
+                <li><a href="#purchase">Purchase</a></li>
+                <li><a href="#installation">Installation</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Volume Bubble Indicator</h1>
+            <p class="subtitle">Advanced Volume Analysis with Absorption Detection for NinjaTrader 8</p>
+            <div class="hero-buttons">
+                <a href="#purchase" class="btn btn-primary">Get Started</a>
+                <a href="#features" class="btn btn-secondary">Learn More</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Volume Bubbles</h3>
+                    <p>Visual representation of volume at each price level with customizable size and transparency</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Absorption Detection</h3>
+                    <p>Automatically identifies when large orders are absorbed without sustainable price movement</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💡</div>
+                    <h3>Hover Tooltips</h3>
+                    <p>Interactive tooltips display detailed volume information when hovering over bubbles</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚙️</div>
+                    <h3>Fully Customizable</h3>
+                    <p>Adjust colors, sizes, sensitivity, and detection parameters to match your trading style</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3>Real-Time Updates</h3>
+                    <p>Live market data processing with OnEachTick calculation for immediate insights</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Clean Design</h3>
+                    <p>Minimalistic interface that doesn't clutter your charts while providing essential information</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Screenshots Section -->
+    <section id="screenshots" class="screenshots">
+        <div class="container">
+            <h2>Screenshots</h2>
+            <p class="section-subtitle">See the indicator in action</p>
+            <div class="screenshot-grid">
+                <div class="screenshot-item">
+                    <img src="screenshot1.png" alt="Absorption Detection - Verkaufsdruck absorbiert" class="screenshot-img" onclick="openLightbox(this)">
+                    <p class="screenshot-caption">Absorption Detection in Action</p>
+                </div>
+                <div class="screenshot-item">
+                    <img src="screenshot2.png" alt="Volume Bubbles Display on Chart" class="screenshot-img" onclick="openLightbox(this)">
+                    <p class="screenshot-caption">Volume Bubbles on Live Chart</p>
+                </div>
+                <div class="screenshot-item">
+                    <img src="screenshot3.png" alt="Indicator Settings and Customization" class="screenshot-img" onclick="openLightbox(this)">
+                    <p class="screenshot-caption">Customizable Parameters</p>
+                </div>
+            </div>
+            <p class="screenshot-hint">💡 Click on any screenshot to view it in full size</p>
+        </div>
+    </section>
+
+    <!-- Technical Details -->
+    <section class="technical-details">
+        <div class="container">
+            <h2>Technical Specifications</h2>
+            <div class="specs-grid">
+                <div class="spec-item">
+                    <strong>Platform:</strong>
+                    <span>NinjaTrader 8</span>
+                </div>
+                <div class="spec-item">
+                    <strong>Calculation Mode:</strong>
+                    <span>OnEachTick</span>
+                </div>
+                <div class="spec-item">
+                    <strong>Data Requirements:</strong>
+                    <span>Tick Data</span>
+                </div>
+                <div class="spec-item">
+                    <strong>Chart Type:</strong>
+                    <span>Overlay Indicator</span>
+                </div>
+            </div>
+            
+            <h3>Customizable Parameters</h3>
+            <ul class="parameter-list">
+                <li><strong>Minimum Volume:</strong> Set threshold for bubble display</li>
+                <li><strong>Bubble Size:</strong> Configure min/max bubble dimensions</li>
+                <li><strong>Colors:</strong> Customize bid/ask colors and transparency</li>
+                <li><strong>Absorption Detection:</strong> Fine-tune sensitivity and lookback periods</li>
+                <li><strong>Price Range:</strong> Control max price movement for absorption detection</li>
+                <li><strong>Visual Options:</strong> Toggle labels, tooltips, and markers</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Purchase Section -->
+    <section id="purchase" class="purchase">
+        <div class="container">
+            <h2>Choose Your Plan</h2>
+            <div class="pricing-grid">
+                <!-- One-Time Purchase -->
+                <div class="pricing-card">
+                    <div class="price-tag">
+                        <span class="currency">$</span>
+                        <span class="amount">150</span>
+                        <span class="period">one-time</span>
+                    </div>
+                    <h3>Lifetime License</h3>
+                    <ul class="price-features">
+                        <li>✓ Pay Once, Use Forever</li>
+                        <li>✓ All Features Included</li>
+                        <li>✓ Free Updates</li>
+                        <li>✓ Installation Guide</li>
+                        <li>✓ Email Support</li>
+                    </ul>
+                    
+                    <!-- PayPal Button Container -->
+                    <div id="paypal-button-container-onetime"></div>
+                    
+                    <p class="secure-payment">🔒 Secure payment via PayPal</p>
+                </div>
+
+                <!-- Monthly Subscription -->
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Most Flexible</div>
+                    <div class="price-tag">
+                        <span class="currency">$</span>
+                        <span class="amount">5</span>
+                        <span class="period">/month</span>
+                    </div>
+                    <h3>Monthly Subscription</h3>
+                    <ul class="price-features">
+                        <li>✓ Cancel Anytime</li>
+                        <li>✓ All Features Included</li>
+                        <li>✓ Continuous Updates</li>
+                        <li>✓ Installation Guide</li>
+                        <li>✓ Priority Support</li>
+                    </ul>
+                    
+                    <!-- PayPal Subscription Button Container -->
+                    <div id="paypal-button-container-subscription"></div>
+                    
+                    <p class="secure-payment">🔒 Secure payment via PayPal</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Installation Section -->
+    <section id="installation" class="installation">
+        <div class="container">
+            <h2>Installation Guide</h2>
+            <div class="install-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Purchase & Download</h3>
+                        <p>After completing your purchase, you'll receive a download link via email containing the indicator file (VolumeBubbleIndicator.cs)</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Import to NinjaTrader</h3>
+                        <p>Open NinjaTrader 8, go to Tools → Import → NinjaScript Add-On, and select the downloaded file</p>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Compile & Apply</h3>
+                        <p>Compile the indicator (F5 in the NinjaScript Editor) and add it to your chart from the Indicators menu</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Volume Bubble Indicator. All rights reserved.</p>
+            <p class="footer-links">
+                <a href="mailto:support@yourdomain.com">Support</a> | 
+                <a href="#terms">Terms</a> | 
+                <a href="#privacy">Privacy</a>
+            </p>
+        </div>
+    </footer>
+
+    <!-- Lightbox Modal -->
+    <div id="lightbox" class="lightbox" onclick="closeLightbox()">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-content" id="lightbox-img">
+        <div class="lightbox-caption" id="lightbox-caption"></div>
+    </div>
+
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_PAYPAL_CLIENT_ID&currency=USD"></script>
+    <script src="script.js"></script>
+</body>
+</html>
