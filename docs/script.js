@@ -36,10 +36,16 @@ paypal.Buttons({
 
 // Monthly subscription button
 paypal.Buttons({
+    style: {
+        shape: 'rect',
+        color: 'blue',
+        layout: 'vertical',
+        label: 'subscribe'
+    },
     // Set up the subscription
     createSubscription: function(data, actions) {
         return actions.subscription.create({
-            'plan_id': 'YOUR_PAYPAL_SUBSCRIPTION_PLAN_ID' // Replace with your actual plan ID
+            'plan_id': 'P-0UY85111HW8408537NFP7UAQ'
         });
     },
     
