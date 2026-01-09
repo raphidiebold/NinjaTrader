@@ -15,14 +15,13 @@ function initPayPal() {
 
   // Render PayPal button for one-time payment
   paypal.Buttons({
-    fundingSource: paypal.FUNDING.PAYPAL,
     createOrder: async function(data, actions) {
       try {
         const response = await fetch('/.netlify/functions/create-paypal-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            amount: '49.00',
+            amount: '150.00',
             currency: 'USD',
             product: 'Volume Bubble Indicator - Lifetime License'
           })
