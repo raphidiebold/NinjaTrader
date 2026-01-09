@@ -48,7 +48,7 @@ function initPayPal() {
         
         if (captureData.status === 'COMPLETED') {
           // Send download link via email
-          await fetch('/.netlify/functions/send-download', {
+          const emailResponse = await fetch('/.netlify/functions/send-download', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -58,8 +58,15 @@ function initPayPal() {
             })
           });
           
-          alert('Payment successful! Check your email for the download link.');
-          window.location.href = '#installation';
+          showSuccessMessage(
+            '🎉 Payment Successful!',
+            `Thank you for your purchase!<br><br>
+            📧 <strong>We've sent the download link to:</strong><br>
+            ${captureData.payer.email_address}<br><br>
+            Please check your inbox (and spam folder) for the email with your Volume Bubble Indicator download link and installation instructions.<br><br>
+            Order ID: ${data.orderID}`,
+            '#installation'
+          );
         } else {
           showPayPalError('Payment verification failed');
         }
@@ -115,7 +122,7 @@ function initPayPal() {
         
         if (subscriptionDetails.status === 'ACTIVE') {
           // Send download link via email for subscription
-          await fetch('/.netlify/functions/send-download', {
+          const emailResponse = await fetch('/.netlify/functions/send-download', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -125,8 +132,16 @@ function initPayPal() {
             })
           });
           
-          alert('Subscription activated! Check your email for the download link.');
-          window.location.href = '#installation';
+          showSuccessMessage(
+            '🎉 Subscription Activated!',
+            `Thank you for subscribing!<br><br>
+            📧 <strong>We've sent the download link to:</strong><br>
+            ${subscriptionDetails.subscriber.email_address}<br><br>
+            Please check your inbox (and spam folder) for the email with your Volume Bubble Indicator download link and installation instructions.<br><br>
+            Your monthly subscription is now active.<br>
+            Subscription ID: ${data.subscriptionID}`,
+            '#installation'
+          );
         } else {
           showPayPalError('Subscription verification failed', 'subscription');
         }
@@ -169,6 +184,66 @@ function showPayPalError(message, type = 'onetime') {
 
 function hidePayPalError() {
   // Errors are automatically replaced by PayPal buttons
+}
+
+function showSuccessMessage(title, message, redirectHash) {
+  // Create modal overlay
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s;
+  `;
+  
+  // Create modal
+  const modal = document.createElement('div');
+  modal.style.cssText = `
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: slideIn 0.3s;
+  `;
+  
+  modal.innerHTML = `
+    <h2 style="color: #16a34a; margin-bottom: 20px; font-size: 28px;">${title}</h2>
+    <div style="color: #374151; line-height: 1.6; margin-bottom: 30px; font-size: 16px;">${message}</div>
+    <button onclick="this.closest('[style*=fixed]').remove(); window.location.href='${redirectHash}';" 
+            style="background: #2563eb; color: white; border: none; padding: 12px 30px; border-radius: 8px; font-size: 16px; cursor: pointer; font-weight: 600;">
+      Continue to Installation Guide
+    </button>
+  `;
+  
+  overlay.appendChild(modal);
+  document.body.appendChild(overlay);
+  
+  // Add CSS animations
+  if (!document.getElementById('success-modal-styles')) {
+    const style = document.createElement('style');
+    style.id = 'success-modal-styles';
+    style.textContent = `
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes slideIn {
+        from { transform: translateY(-50px); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
 }
 
 // Lightbox functionality for screenshots
