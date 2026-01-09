@@ -16,23 +16,16 @@ function initPayPal() {
   // Render PayPal button for one-time payment
   paypal.Buttons({
     createOrder: async function(data, actions) {
-      try {
-        const response = await fetch('/.netlify/functions/create-paypal-order', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            amount: '150.00',
-            currency: 'USD',
-            product: 'Volume Bubble Indicator - Lifetime License'
-          })
-        });
-        
-        const orderData = await response.json();
-        return orderData.orderId;
-      } catch (error) {
-        console.error('Error creating order:', error);
-        showPayPalError('Failed to create order');
-      }
+      return actions.order.create({
+        intent: 'CAPTURE',
+        purchase_units: [{
+          description: 'Volume Bubble Indicator - Lifetime License',
+          amount: {
+            currency_code: 'USD',
+            value: '150.00'
+          }
+        }]
+      });
     },
     
     onApprove: async function(data, actions) {
