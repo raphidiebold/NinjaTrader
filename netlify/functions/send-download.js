@@ -47,25 +47,25 @@ exports.handler = async (event, context) => {
             <p style="font-size: 14px; color: #6b7280; margin-top: 10px;">The ZIP file contains the compiled DLL ready for installation.</p>
           </div>
           
-          <h3>📝 Installationsanleitung</h3>
+          <h3>📝 Installation Instructions</h3>
           <ol style="line-height: 1.8;">
-            <li><strong>Download</strong> die ZIP-Datei mit dem Button oben</li>
-            <li><strong>Entpacken</strong> Sie die ZIP-Datei - Sie erhalten die <code>.cs</code> und <code>.dll</code> Dateien</li>
-            <li><strong>Schließen</strong> Sie NinjaTrader 8 komplett (falls geöffnet)</li>
-            <li>Öffnen Sie den <strong>Datei Explorer</strong></li>
-            <li>Navigieren Sie zu: <strong>NinjaTrader 8 Ordner</strong> → <strong>bin</strong> → <strong>Custom</strong></li>
-            <li><strong>Kopieren</strong> Sie <strong>beide Dateien</strong> (.cs und .dll) in den <code>Custom</code> Ordner</li>
-            <li><strong>Starten</strong> Sie NinjaTrader 8 neu</li>
-            <li>Der Indikator ist jetzt verfügbar und kann zu Ihrem Chart hinzugefügt werden</li>
+            <li><strong>Download</strong> the ZIP file using the button above</li>
+            <li><strong>Extract</strong> the ZIP file - you will get the <code>.cs</code> and <code>.dll</code> files</li>
+            <li><strong>Close</strong> NinjaTrader 8 completely (if open)</li>
+            <li>Open <strong>File Explorer</strong></li>
+            <li>Navigate to: <strong>NinjaTrader 8 folder</strong> → <strong>bin</strong> → <strong>Custom</strong></li>
+            <li><strong>Copy</strong> <strong>both files</strong> (.cs and .dll) into the <code>Custom</code> folder</li>
+            <li><strong>Restart</strong> NinjaTrader 8</li>
+            <li>The indicator is now available and can be added to your chart</li>
           </ol>
           
           <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
-            <p style="margin: 0;"><strong>⚠️ Wichtig:</strong> Stellen Sie sicher, dass NinjaTrader 8 komplett geschlossen ist, bevor Sie die Dateien kopieren.</p>
+            <p style="margin: 0;"><strong>⚠️ Important:</strong> Make sure NinjaTrader 8 is completely closed before copying the files.</p>
           </div>
           
-          <h3>📁 Pfad-Beispiel</h3>
+          <h3>📁 Path Example</h3>
           <p style="background: #f3f4f6; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 14px;">
-            C:\\Users\\IhrBenutzername\\Documents\\NinjaTrader 8\\bin\\Custom\\<br>
+            C:\\Users\\YourUsername\\Documents\\NinjaTrader 8\\bin\\Custom\\<br>
             → LargeTradesDetectorRD.cs<br>
             → LargeTradesDetectorRD.dll
           </p>
