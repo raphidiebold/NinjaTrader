@@ -22,7 +22,7 @@ function initPayPal() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            amount: '150.00',
+            amount: '49.00',
             currency: 'USD',
             product: 'Volume Bubble Indicator - Lifetime License'
           })
