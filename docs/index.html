@@ -132,35 +132,11 @@
     <!-- Purchase Section -->
     <section id="purchase" class="purchase">
         <div class="container">
-            <h2>Choose Your Plan</h2>
-            <div class="pricing-grid">
-                <!-- One-Time Purchase -->
-                <div class="pricing-card">
-                    <div class="price-tag">
-                        <span class="currency">$</span>
-                        <span class="amount">150</span>
-                        <span class="period">one-time</span>
-                    </div>
-                    <h3>Lifetime License</h3>
-                    <ul class="price-features">
-                        <li>✓ Pay Once, Use Forever</li>
-                        <li>✓ All Features Included</li>
-                        <li>✓ Free Updates</li>
-                        <li>✓ Installation Guide</li>
-                        <li>✓ Email Support</li>
-                    </ul>
-                    
-                    <!-- PayPal SDK v6 Button -->
-                    <div id="paypal-button-onetime" style="min-height: 50px;">
-                        <paypal-button type="pay" hidden></paypal-button>
-                    </div>
-                    
-                    <p class="secure-payment">🔒 Secure payment via PayPal • Credit Cards accepted</p>
-                </div>
-
+            <h2>Get Started Today</h2>
+            <div class="pricing-container" style="max-width: 500px; margin: 0 auto;">
                 <!-- Monthly Subscription -->
                 <div class="pricing-card popular">
-                    <div class="popular-badge">Most Flexible</div>
+                    <div class="popular-badge">Flexible Payment</div>
                     <div class="price-tag">
                         <span class="currency">$</span>
                         <span class="amount">5</span>
@@ -173,10 +149,11 @@
                         <li>✓ Continuous Updates</li>
                         <li>✓ Installation Guide</li>
                         <li>✓ Priority Support</li>
+                        <li>✓ Instant Access</li>
                     </ul>
                     
                     <!-- PayPal Subscription Button -->
-                    <div id="paypal-button-subscription" style="min-height: 50px;">
+                    <div id="paypal-button-subscription" style="min-height: 50px; margin: 20px 0;">
                         <paypal-button type="subscribe" hidden></paypal-button>
                     </div>
                     
@@ -235,7 +212,7 @@
         <div class="lightbox-caption" id="lightbox-caption"></div>
     </div>
 
-    <!-- PayPal JavaScript SDK v5 - LIVE Mode -->
+    <!-- PayPal JavaScript SDK - Subscription only -->
     <script src="https://www.paypal.com/sdk/js?client-id=AXLpSneZTIHMF9zCLH2OrAzNKlTg7tiNiQS6hh_cr_ej-hP382kfprR5ROWzp1Lm69dSbLRS9cGJGOhE&amp;vault=true&amp;intent=subscription&amp;currency=USD"></script>
     <script src="script.js"></script>
 </body>
