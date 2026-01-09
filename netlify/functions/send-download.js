@@ -23,41 +23,62 @@ exports.handler = async (event, context) => {
       }
     });
 
-    // Download link (you'll need to host the file somewhere accessible)
-    const downloadLink = process.env.DOWNLOAD_URL || 'https://your-domain.com/downloads/VolumeBubbleIndicator.cs';
+    // Download link - ZIP file with compiled DLL from GitHub Release
+    const downloadLink = process.env.DOWNLOAD_URL || 'https://github.com/raphidiebold/NinjaTrader/releases/download/Indikator/LargeTradesDetectorRD.zip';
 
     // Email content
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: email,
-      subject: 'Volume Bubble Indicator - Download Link',
+      subject: 'Volume Bubble Indicator - Download & Installation',
       html: `
-        <h2>Thank you for your purchase!</h2>
-        <p>Hi ${name || 'there'},</p>
-        <p>Thank you for purchasing the Volume Bubble Indicator for NinjaTrader 8.</p>
-        ${type === 'subscription' 
-          ? '<p>Your monthly subscription is now active.</p>' 
-          : '<p>Your lifetime license is now activated.</p>'
-        }
-        
-        <h3>Download Your Indicator</h3>
-        <p><a href="${downloadLink}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">Download VolumeBubbleIndicator.cs</a></p>
-        
-        <h3>Installation Instructions</h3>
-        <ol>
-          <li>Download the file using the link above</li>
-          <li>Open NinjaTrader 8</li>
-          <li>Go to Tools → Import → NinjaScript Add-On</li>
-          <li>Select the downloaded file</li>
-          <li>Press F5 to compile</li>
-          <li>Add the indicator to your chart</li>
-        </ol>
-        
-        <p>${type === 'subscription' ? 'Subscription' : 'Order'} ID: ${transactionId}</p>
-        
-        <p>If you have any questions, please reply to this email.</p>
-        
-        <p>Best regards,<br>Your Team</p>
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #2563eb;">Thank you for your purchase!</h2>
+          <p>Hi ${name || 'there'},</p>
+          <p>Thank you for purchasing the <strong>Volume Bubble Indicator</strong> for NinjaTrader 8.</p>
+          ${type === 'subscription' 
+            ? '<p style="color: #10b981;">✓ Your monthly subscription is now active.</p>' 
+            : '<p style="color: #10b981;">✓ Your lifetime license is now activated.</p>'
+          }
+          
+          <div style="background: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h3 style="margin-top: 0;">📦 Download Your Indicator</h3>
+            <p><a href="${downloadLink}" style="background-color: #2563eb; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: bold;">Download LargeTradesDetectorRD.zip</a></p>
+            <p style="font-size: 14px; color: #6b7280; margin-top: 10px;">The ZIP file contains the compiled DLL ready for installation.</p>
+          </div>
+          
+          <h3>📝 Installation Instructions</h3>
+          <ol style="line-height: 1.8;">
+            <li><strong>Download</strong> the ZIP file using the button above</li>
+            <li><strong>Extract</strong> the ZIP file to get <code>LargeTradesDetectorRD.dll</code></li>
+            <li><strong>Open NinjaTrader 8</strong></li>
+            <li>Go to <strong>Documents</strong> → <strong>NinjaTrader 8</strong> → <strong>bin</strong> → <strong>Custom</strong></li>
+            <li><strong>Copy</strong> the <code>LargeTradesDetectorRD.dll</code> file into the <code>Custom</code> folder</li>
+            <li><strong>Restart NinjaTrader 8</strong></li>
+            <li>Go to your chart and click <strong>Indicators</strong> → Find <strong>"Large Trades Detector RD"</strong></li>
+            <li><strong>Add</strong> the indicator to your chart</li>
+          </ol>
+          
+          <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0;">
+            <p style="margin: 0;"><strong>⚠️ Important:</strong> Make sure NinjaTrader 8 is completely closed before copying the DLL file.</p>
+          </div>
+          
+          <h3>📁 Full Path Example</h3>
+          <p style="background: #f3f4f6; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 14px;">
+            C:\\Users\\YourUsername\\Documents\\NinjaTrader 8\\bin\\Custom\\LargeTradesDetectorRD.dll
+          </p>
+          
+          <div style="border-top: 1px solid #e5e7eb; margin-top: 30px; padding-top: 20px;">
+            <p style="font-size: 14px; color: #6b7280;">
+              ${type === 'subscription' ? 'Subscription' : 'Order'} ID: <strong>${transactionId}</strong><br>
+              ${type === 'subscription' ? 'Your subscription will renew automatically each month.' : 'This is a one-time payment with lifetime access.'}
+            </p>
+          </div>
+          
+          <p>If you have any questions or need support, please reply to this email.</p>
+          
+          <p style="margin-top: 30px;">Best regards,<br><strong>Volume Bubble Indicator Team</strong></p>
+        </div>
       `
     };
 
