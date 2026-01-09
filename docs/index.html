@@ -175,10 +175,9 @@
                         <li>✓ Priority Support</li>
                     </ul>
                     
-                    <!-- PayPal Subscription - Coming Soon -->
-                    <div style="text-align: center; padding: 20px; background: #f5f5f5; border-radius: 8px;">
-                        <p style="margin: 0; color: #666;">Subscription option coming soon!</p>
-                        <p style="margin: 8px 0 0 0; font-size: 14px; color: #999;">Use one-time purchase for now</p>
+                    <!-- PayPal Subscription Button -->
+                    <div id="paypal-button-subscription" style="min-height: 50px;">
+                        <paypal-button type="subscribe" hidden></paypal-button>
                     </div>
                     
                     <p class="secure-payment">🔒 Secure payment via PayPal • Credit Cards accepted</p>
@@ -236,8 +235,8 @@
         <div class="lightbox-caption" id="lightbox-caption"></div>
     </div>
 
-    <!-- PayPal JavaScript SDK v5 - Simple Integration -->
-    <script src="https://www.paypal.com/sdk/js?client-id=Adr6O6q0QWdYPcLqGOPSQqEGY2gKEwRVex_VDYkCV82zI36wwQhR1LBQM0JDxOzGKFB9SqE3icKlvQxL&currency=USD"></script>
+    <!-- PayPal JavaScript SDK v5 with Subscription Support -->
+    <script src="https://www.paypal.com/sdk/js?client-id=Adr6O6q0QWdYPcLqGOPSQqEGY2gKEwRVex_VDYkCV82zI36wwQhR1LBQM0JDxOzGKFB9SqE3icKlvQxL&vault=true&intent=subscription&currency=USD"></script>
     <script src="script.js"></script>
 </body>
 </html>

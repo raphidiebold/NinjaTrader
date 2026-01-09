@@ -1,4 +1,4 @@
-// PayPal Simple Integration - One-Time Payment Only
+// PayPal Integration - One-Time Payment & Subscription
 
 // Wait for PayPal SDK to load
 if (typeof paypal !== 'undefined') {
@@ -53,7 +53,8 @@ function initPayPal() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               email: captureData.payer.email_address,
-              orderId: data.orderID
+              orderId: data.orderID,
+              type: 'onetime'
             })
           });
           
@@ -81,12 +82,82 @@ function initPayPal() {
     }
   }).render('#paypal-button-onetime');
   
-  // Hide error message when PayPal loads successfully
+  // Render PayPal button for monthly subscription
+  paypal.Buttons({
+    createSubscription: async function(data, actions) {
+      try {
+        const response = await fetch('/.netlify/functions/create-paypal-subscription', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const subscriptionData = await response.json();
+        
+        if (subscriptionData.error) {
+          console.error('Subscription error:', subscriptionData);
+          showPayPalError('Failed to create subscription', 'subscription');
+          throw new Error(subscriptionData.error);
+        }
+        
+        return subscriptionData.subscriptionId;
+      } catch (error) {
+        console.error('Error creating subscription:', error);
+        showPayPalError('Failed to create subscription', 'subscription');
+        throw error;
+      }
+    },
+    
+    onApprove: async function(data, actions) {
+      try {
+        // Get subscription details
+        const response = await fetch(`/.netlify/functions/get-subscription-details?subscriptionId=${data.subscriptionID}`);
+        const subscriptionDetails = await response.json();
+        
+        if (subscriptionDetails.status === 'ACTIVE') {
+          // Send download link via email for subscription
+          await fetch('/.netlify/functions/send-download', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              email: subscriptionDetails.subscriber.email_address,
+              subscriptionId: data.subscriptionID,
+              type: 'subscription'
+            })
+          });
+          
+          alert('Subscription activated! Check your email for the download link.');
+          window.location.href = '#installation';
+        } else {
+          showPayPalError('Subscription verification failed', 'subscription');
+        }
+      } catch (error) {
+        console.error('Error approving subscription:', error);
+        showPayPalError('Subscription processing failed', 'subscription');
+      }
+    },
+    
+    onError: function(err) {
+      console.error('PayPal subscription error:', err);
+      showPayPalError('Subscription system error', 'subscription');
+    },
+    
+    style: {
+      layout: 'vertical',
+      color: 'gold',
+      shape: 'rect',
+      label: 'subscribe'
+    }
+  }).render('#paypal-button-subscription');
+  
+  // Hide error messages when PayPal loads successfully
   hidePayPalError();
 }
 
-function showPayPalError(message) {
-  const container = document.getElementById('paypal-button-onetime');
+function showPayPalError(message, type = 'onetime') {
+  const containerId = type === 'subscription' 
+    ? 'paypal-button-subscription' 
+    : 'paypal-button-onetime';
+  const container = document.getElementById(containerId);
   if (container) {
     container.innerHTML = `
       <div style="padding: 20px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; color: #856404;">
@@ -97,7 +168,7 @@ function showPayPalError(message) {
 }
 
 function hidePayPalError() {
-  // Error is automatically replaced by PayPal button
+  // Errors are automatically replaced by PayPal buttons
 }
 
 // Lightbox functionality for screenshots

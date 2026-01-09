@@ -4,3 +4,14 @@
 
 [functions]
   node_bundler = "esbuild"
+
+# Environment variables (configure in Netlify Dashboard)
+# Required variables:
+# PAYPAL_CLIENT_ID = Your PayPal Client ID
+# PAYPAL_CLIENT_SECRET = Your PayPal Client Secret
+# PAYPAL_ENV = sandbox (or production)
+# PAYPAL_PLAN_ID = P-0M377129CN458145HNFQEDLA
+# SMTP_HOST = Your SMTP server
+# SMTP_USER = Your SMTP username
+# SMTP_PASS = Your SMTP password
+# DOWNLOAD_URL = URL to your indicator file

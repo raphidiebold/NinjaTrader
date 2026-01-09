@@ -8,7 +8,9 @@ exports.handler = async (event, context) => {
 
   try {
     const data = JSON.parse(event.body);
-    const { orderId, email, name, type } = data;
+    const { orderId, subscriptionId, email, name, type } = data;
+    
+    const transactionId = orderId || subscriptionId;
 
     // Create email transporter (configure with your email service)
     const transporter = nodemailer.createTransport({
@@ -31,7 +33,7 @@ exports.handler = async (event, context) => {
       subject: 'Volume Bubble Indicator - Download Link',
       html: `
         <h2>Thank you for your purchase!</h2>
-        <p>Hi ${name},</p>
+        <p>Hi ${name || 'there'},</p>
         <p>Thank you for purchasing the Volume Bubble Indicator for NinjaTrader 8.</p>
         ${type === 'subscription' 
           ? '<p>Your monthly subscription is now active.</p>' 
@@ -51,7 +53,7 @@ exports.handler = async (event, context) => {
           <li>Add the indicator to your chart</li>
         </ol>
         
-        <p>Order ID: ${orderId}</p>
+        <p>${type === 'subscription' ? 'Subscription' : 'Order'} ID: ${transactionId}</p>
         
         <p>If you have any questions, please reply to this email.</p>
         
