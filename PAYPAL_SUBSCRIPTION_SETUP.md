@@ -68,11 +68,17 @@ Du brauchst:
 3. **docs/script.js** - Hinzugefügt: Subscription Button Integration
 4. **docs/index.html** - Ersetzt "Coming Soon" mit PayPal Button
 
+## Production Credentials
+
+**Production Plan ID**: `P-03G34752HD339703HNFQGJ7Q`
+**Production Client ID**: `AXLpSne2TH4MF9zCU4BQrA2NKfg7hlNlG56rhL_eI_qI-HP3B2kIprR6ROWzp1urH9dJSbLR39cGJGOhE`
+
 ## Nächste Schritte
 
 1. ✅ Plan in PayPal Sandbox erstellt
-2. ⏳ `PAYPAL_PLAN_ID` zu Netlify Umgebungsvariablen hinzufügen
-3. ⏳ Code committen und pushen
-4. ⏳ Auf Netlify deployen
-5. ⏳ Subscription mit Sandbox Account testen
-6. ⏳ Bei Erfolg: auf Production umstellen
+2. ✅ `PAYPAL_PLAN_ID` zu Netlify Umgebungsvariablen hinzugefügt
+3. ✅ Code committen und pushen
+4. ✅ Auf Netlify deployen
+5. ✅ Subscription mit Sandbox Account getestet
+6. ✅ Production App und Plan erstellt
+7. ⏳ Netlify auf Production umstellen
