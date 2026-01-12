@@ -23,20 +23,34 @@ function initPayPalButtons() {
             label: 'subscribe'
         },
         createSubscription: function(data, actions) {
+            // Validate email before creating subscription
+            const email = document.getElementById('customer-email').value.trim();
+            if (!email || !isValidEmail(email)) {
+                alert('Please enter a valid email address to receive your download link.');
+                return Promise.reject(new Error('Invalid email'));
+            }
+            
+            // Save email to localStorage for payment-success page
+            localStorage.setItem('customerEmail', email);
+            
             return actions.subscription.create({
                 'plan_id': 'P-0UY85111HW8408537NFP7UAQ'
             });
         },
         onApprove: function(data, actions) {
+            const email = document.getElementById('customer-email').value.trim();
+            
             showSuccessMessage({
                 id: data.subscriptionID,
-                subscription: true
+                subscription: true,
+                email: email
             }, 'subscription');
             
             sendOrderToServer({
                 id: data.subscriptionID,
                 orderID: data.orderID,
-                subscription: true
+                subscription: true,
+                email: email
             }, 'subscription');
         },
         onError: function(err) {
@@ -44,6 +58,10 @@ function initPayPalButtons() {
             alert('Error with subscription. Please try again or contact support.');
         }
     }).render('#paypal-button-subscription');
+}
+
+function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function showSuccessMessage(orderData, type) {
@@ -63,6 +81,8 @@ function showSuccessMessage(orderData, type) {
 }
 
 function sendOrderToServer(orderData, type) {
+    const email = orderData.email || document.getElementById('customer-email').value.trim();
+    
     fetch('/.netlify/functions/send-download', {
         method: 'POST',
         headers: {
@@ -70,7 +90,8 @@ function sendOrderToServer(orderData, type) {
         },
         body: JSON.stringify({
             orderId: orderData.id,
-            email: orderData.payer?.email_address || 'customer@email.com',
+            subscriptionId: orderData.id,
+            email: email,
             name: orderData.payer?.name?.given_name || 'Customer',
             type: type,
             subscription: orderData.subscription || false

@@ -33,7 +33,9 @@ exports.handler = async (event, context) => {
     const tokenData = await tokenResponse.json();
     const accessToken = tokenData.access_token;
 
-    // Create order
+    // Create order with return URLs
+    const siteUrl = event.headers.origin || event.headers.referer?.split('/').slice(0, 3).join('/') || 'https://rdindicators.netlify.app';
+    
     const orderResponse = await fetch(`${baseURL}/v2/checkout/orders`, {
       method: 'POST',
       headers: {
@@ -48,11 +50,23 @@ exports.handler = async (event, context) => {
             currency_code: currency || 'USD',
             value: amount
           }
-        }]
+        }],
+        application_context: {
+          brand_name: 'Volume Bubble Indicator',
+          locale: 'en-US',
+          landing_page: 'BILLING',
+          shipping_preference: 'NO_SHIPPING',
+          user_action: 'PAY_NOW',
+          return_url: `${siteUrl}/payment-success.html`,
+          cancel_url: `${siteUrl}/index.html#purchase`
+        }
       })
     });
 
     const orderData = await orderResponse.json();
+    
+    // Find approval URL
+    const approvalUrl = orderData.links?.find(link => link.rel === 'approve')?.href;
 
     return {
       statusCode: 200,
@@ -61,7 +75,8 @@ exports.handler = async (event, context) => {
         'Access-Control-Allow-Origin': '*',
       },
       body: JSON.stringify({
-        orderId: orderData.id
+        orderId: orderData.id,
+        approvalUrl: approvalUrl
       })
     };
 

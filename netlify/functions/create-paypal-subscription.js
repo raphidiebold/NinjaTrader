@@ -56,6 +56,8 @@ exports.handler = async (event, context) => {
     }
 
     // Create subscription
+    const siteUrl = event.headers.origin || event.headers.referer?.split('/').slice(0, 3).join('/') || 'https://rdindicators.netlify.app';
+    
     const subscriptionResponse = await fetch(`${baseURL}/v1/billing/subscriptions`, {
       method: 'POST',
       headers: {
@@ -69,8 +71,8 @@ exports.handler = async (event, context) => {
           locale: 'en-US',
           shipping_preference: 'NO_SHIPPING',
           user_action: 'SUBSCRIBE_NOW',
-          return_url: `${event.headers.origin || 'https://your-domain.netlify.app'}/#purchase`,
-          cancel_url: `${event.headers.origin || 'https://your-domain.netlify.app'}/#purchase`
+          return_url: `${siteUrl}/payment-success.html?type=subscription`,
+          cancel_url: `${siteUrl}/index.html#purchase`
         }
       })
     });
@@ -84,13 +86,16 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ error: 'Failed to create subscription', details: subscriptionData })
       };
     }
+    
+    // Find approval URL
+    const approvalUrl = subscriptionData.links?.find(link => link.rel === 'approve')?.href;
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         subscriptionId: subscriptionData.id,
         status: subscriptionData.status,
-        links: subscriptionData.links
+        approvalUrl: approvalUrl
       })
     };
 

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Volume Bubble Indicator</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .success-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        .success-container {
+            background: white;
+            border-radius: 16px;
+            padding: 60px 50px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        .success-icon {
+            font-size: 80px;
+            color: #10b981;
+            margin-bottom: 20px;
+        }
+        .success-title {
+            font-size: 32px;
+            color: #10b981;
+            margin-bottom: 20px;
+        }
+        .success-message {
+            color: #374151;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        .loading {
+            display: inline-block;
+            margin: 20px 0;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="success-page">
+        <div class="success-container">
+            <div class="success-icon">✓</div>
+            <h1 class="success-title">Payment Successful!</h1>
+            
+            <div id="processing" class="loading">
+                <div class="spinner"></div>
+                <p>Processing your payment...</p>
+            </div>
+            
+            <div id="success-content" style="display: none;">
+                <div class="success-message">
+                    <p><strong>Thank you for your purchase!</strong></p>
+                    <p id="payment-details"></p>
+                    <p>📧 We're sending the download link to your email address.</p>
+                    <p>Please check your inbox (and spam folder) for the email with your Volume Bubble Indicator download link and installation instructions.</p>
+                </div>
+                
+                <a href="index.html#installation" class="btn btn-primary">
+                    View Installation Guide
+                </a>
+                <br><br>
+                <a href="index.html" style="color: #667eea; text-decoration: none; font-weight: 600;">
+                    ← Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const subscriptionId = urlParams.get('subscription_id');
+        const type = urlParams.get('type');
+        
+        async function processPayment() {
+            try {
+                if (subscriptionId || type === 'subscription') {
+                    // Handle subscription
+                    const response = await fetch(`/.netlify/functions/get-subscription-details?subscriptionId=${subscriptionId || token}`);
+                    const data = await response.json();
+                    
+                    document.getElementById('processing').style.display = 'none';
+                    document.getElementById('success-content').style.display = 'block';
+                    document.getElementById('payment-details').innerHTML = `
+                        Your monthly subscription is now active.<br>
+                        Subscription ID: ${data.id || subscriptionId || token}
+                    `;
+                    
+                    // Send download email
+                    const customerEmail = data.subscriber?.email_address || localStorage.getItem('customerEmail') || 'customer@email.com';
+                    await fetch('/.netlify/functions/send-download', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: customerEmail,
+                            subscriptionId: data.id || subscriptionId || token,
+                            type: 'subscription'
+                        })
+                    });
+                } else if (token) {
+                    // Handle one-time payment - capture the order
+                    const response = await fetch('/.netlify/functions/capture-paypal-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ orderId: token })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    document.getElementById('processing').style.display = 'none';
+                    document.getElementById('success-content').style.display = 'block';
+                    document.getElementById('payment-details').innerHTML = `
+                        Order ID: ${data.id || token}<br>
+                        Amount: $${data.purchase_units?.[0]?.amount?.value || '150.00'}
+                    `;
+                    
+                    // Send download email
+                    const customerEmail = data.payer?.email_address || localStorage.getItem('customerEmail') || 'customer@email.com';
+                    await fetch('/.netlify/functions/send-download', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            email: customerEmail,
+                            orderId: data.id || token,
+                            type: 'onetime'
+                        })
+                    });
+                } else {
+                    throw new Error('No payment information found');
+                }
+            } catch (error) {
+                console.error('Error processing payment:', error);
+                document.getElementById('processing').innerHTML = `
+                    <p style="color: #dc2626;">❌ Error processing payment. Please contact support.</p>
+                    <p>Token: ${token}</p>
+                `;
+            }
+        }
+        
+        // Process payment on page load
+        processPayment();
+    </script>
+</body>
+</html>
